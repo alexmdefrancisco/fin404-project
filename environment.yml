@@ -1,0 +1,13 @@
+name: fin404-project
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - numpy
+  - scipy # For optimization, ODEs, root finding
+  - pandas # For data handling, e.g., the Excel file
+  - matplotlib # For plotting
+  - jupyterlab # For notebooks
+  - openpyxl # For reading .xlsx files with pandas
+  # Add other core dependencies here

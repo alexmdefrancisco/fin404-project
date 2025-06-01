@@ -8,7 +8,7 @@ This repository contains the work for the Fin404 Derivatives project at EPFL, fo
 fin404-project/             # root directory
 ├── data/                   # raw and processed datasets (e.g., Fin404-2025-VIXnCo-Data.xlsx)
 ├── notebooks/              # Jupyter notebooks for analysis, derivations, and visualizations
-│   ├── part1_carr_madan_exploration.ipynb
+│   ├── part1_carr_madan.ipynb
 │   ├── part2_vix_analysis.ipynb
 │   └── part3_futures_analysis_calibration.ipynb
 ├── src/                    # source code modules
