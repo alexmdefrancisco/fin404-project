@@ -7,19 +7,14 @@ This repository contains the work for the Fin404 Derivatives project at EPFL, fo
 ```text
 fin404-project/             # root directory
 ├── data/                   # raw and processed datasets (e.g., Fin404-2025-VIXnCo-Data.xlsx)
-├── notebooks/              # Jupyter notebooks for analysis, derivations, and visualizations
-│   ├── part1_carr_madan.ipynb
-│   ├── part2_vix_analysis.ipynb
-│   └── part3_futures_analysis_calibration.ipynb
 ├── src/                    # source code modules
 │   ├── __init__.py
-│   ├── carr_madan.py       # Functions related to Carr-Madan formula implementation/examples
 │   ├── vix_calculations.py # Functions for VIX index related calculations and analysis
 │   ├── futures_models.py   # Implementation of VIX and Variance futures pricing models
 │   ├── calibration.py      # Code for model calibration (Part 3, Q8)
 │   └── utils.py            # Utility functions (e.g., plotting, data loading)
 ├── tests/                  # Unit tests for source code modules (optional, but good practice)
-├── output/                 # Generated figures, tables, and potentially intermediate results
+├── results/                # Generated figures, tables, and potentially intermediate results
 │   ├── figures/            # Plots and graphs
 │   └── tables/             # Numerical results
 ├── report/                 # Source files for the final report (e.g., LaTeX or Word)
