@@ -92,7 +92,7 @@ def analyze_parameter_sensitivity():
 
     # Sensitivity to lambda (Mean-Reversion Speed)
     print('Analyzing sensitivity to lambda...')
-    lambda_range = np.linspace(0.3, 5.0, 48)
+    lambda_range = np.linspace(0.3, 5.0, 95)
     prices_lambda = [compute_vix_futures_price(base_tau, base_V_t, l, base_params['theta_p'], base_params['xi_p']) for l in lambda_range]
     
     plt.figure(figsize=(7, 5))
@@ -108,7 +108,7 @@ def analyze_parameter_sensitivity():
 
     # Sensitivity to theta (Long-Run Variance)
     print('Analyzing sensitivity to theta...')
-    theta_range = np.linspace(0.0, 0.1, 51)
+    theta_range = np.linspace(0.0, 0.1, 101)
     prices_theta = [compute_vix_futures_price(base_tau, base_V_t, base_params['lambda_p'], t, base_params['xi_p']) for t in theta_range]
 
     plt.figure(figsize=(7, 5))
