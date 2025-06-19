@@ -60,7 +60,7 @@ def analyze_variance_futures_sensitivity():
 
     # Sensitivity to lambda (Mean-Reversion Speed)
     print('Analyzing sensitivity to lambda...')
-    lambda_range = np.arange(0.3, 5.0, 0.1)
+    lambda_range = np.linspace(0.3, 5.0, 48)
     prices_lambda = [compute_variance_futures_price(base_tau, base_V_t, base_accrued_var, base_tau_elapsed, l, base_params['theta_p'], base_params['xi_p']) for l in lambda_range]
     
     plt.figure(figsize=(7, 5))
@@ -76,7 +76,7 @@ def analyze_variance_futures_sensitivity():
 
     # Sensitivity to theta (Long-Run Variance)
     print('Analyzing sensitivity to theta...')
-    theta_range = np.arange(0.0, 0.1, 0.002)
+    theta_range = np.linspace(0.0, 0.1, 51)
     prices_theta = [compute_variance_futures_price(base_tau, base_V_t, base_accrued_var, base_tau_elapsed, base_params['lambda_p'], t, base_params['xi_p']) for t in theta_range]
 
     plt.figure(figsize=(7, 5))
@@ -92,7 +92,7 @@ def analyze_variance_futures_sensitivity():
 
     # Sensitivity to xi (Volatility of Volatility)
     print('Analyzing sensitivity to xi...')
-    xi_range = np.arange(0.1, 1.51, 0.01)
+    xi_range = np.linspace(0.1, 1.50, 141)
     prices_xi = [compute_variance_futures_price(base_tau, base_V_t, base_accrued_var, base_tau_elapsed, base_params['lambda_p'], base_params['theta_p'], x) for x in xi_range]
 
     plt.figure(figsize=(7, 5))
