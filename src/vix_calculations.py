@@ -14,23 +14,25 @@ def d_func(tau: float, u: float, lambda_p: float, xi_p: float) -> float:
     """
     This is the formula for d(T-t,u)
     """
-    val = 2 * lambda_p - u * xi_p**2
-    denominator = u * xi_p**2 + val * np.exp(lambda_p * tau)
+    val = 2 * lambda_p + u * xi_p**2
+    denominator = val * np.exp(lambda_p * tau) - u * xi_p**2
     return (2 * lambda_p * u) / denominator
 
 def c_func(tau: float, u: float, lambda_p: float, theta_p: float, xi_p: float) -> float:
     """
     This is the formula for c(T-t,u)
     """
-    val = 2 * lambda_p - u * xi_p**2
+    val = 2 * lambda_p + u * xi_p**2
     
     # If val is non-positive, the formula is not well-defined
     if val <= 0:
         return np.inf
 
     # log_numerator = np.exp(lambda_p * tau) * val
-    log_numerator = np.exp(lambda_p * tau) * (2 * lambda_p)
-    log_denominator = (u * xi_p**2 + val * np.exp(lambda_p * tau))
+    # log_numerator = np.exp(lambda_p * tau) * (2 * lambda_p)
+    # log_denominator = (u * xi_p**2 + val * np.exp(lambda_p * tau))
+    log_numerator = val - u * xi_p**2 * np.exp(- lambda_p * tau)
+    log_denominator = 2 * lambda_p
     
     # Handle potential division by zero or log of non-positive number
     if log_denominator <= 0:
