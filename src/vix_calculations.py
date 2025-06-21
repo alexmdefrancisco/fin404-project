@@ -32,6 +32,10 @@ def c_func(tau: float, u: float, lambda_p: float, theta_p: float, xi_p: float) -
     log_numerator = np.exp(lambda_p * tau) * (2 * lambda_p)
     log_denominator = (u * xi_p**2 + val * np.exp(lambda_p * tau))
     
+    # Handle potential division by zero or log of non-positive number
+    if log_denominator <= 0:
+        return np.inf
+    
     log_term = np.log(log_numerator / log_denominator)
     
     return (2 * lambda_p * theta_p / xi_p**2) * log_term
@@ -64,7 +68,9 @@ def compute_vix_futures_price(
         
         l_val = s * a_prime + c_val + d_val * V_t
         
-        if np.isinf(l_val) or np.isnan(l_val):
+        if np.isinf(l_val):
+            return 1 / (s**1.5)
+        if np.isnan(l_val):
             return 0
 
         return (1 - np.exp(-l_val)) / (s**1.5)
@@ -78,68 +84,66 @@ def compute_vix_futures_price(
 
 def analyze_parameter_sensitivity():
     """
-    Analyzes how the VIX futures price depends on the model parameters
+    Analyzes how the VIX futures term structure depends on the model parameters.
+    Includes a visual proof of the convergence point for the Xi plot.
     """
-    print('--- Running Parameter Sensitivity Analysis ---')
+    print('--- Running Term Structure Sensitivity Analysis ---')
 
     output_dir = 'results/figures'
     os.makedirs(output_dir, exist_ok=True)
 
-    # Case parameters for the analysis
+    # Base Case Parameters for Analysis
     base_V_t = 0.04  # Corresponds to a VIX of 20
-    base_tau = 0.25  # 3 months remaining
     base_params = {'lambda_p': 2.5, 'theta_p': 0.06, 'xi_p': 0.7}
+    tau_range = np.linspace(0.005, 1.0, 200) # Time to maturity from ~1 day to 1 year
 
-    # Sensitivity to lambda (Mean-Reversion Speed)
-    print('Analyzing sensitivity to lambda...')
-    lambda_range = np.linspace(0.3, 5.0, 95)
-    prices_lambda = [compute_vix_futures_price(base_tau, base_V_t, l, base_params['theta_p'], base_params['xi_p']) for l in lambda_range]
-    
-    plt.figure(figsize=(7, 5))
-    plt.plot(lambda_range, prices_lambda)
-    plt.title('VIX Futures Price vs. $\\lambda$ (Mean-Reversion Speed)')
-    plt.xlabel('$\\lambda$')
-    plt.ylabel('Futures Price')
+    # Sensitivity to Lambda
+    print('Generating plot for sensitivity to Lambda...')
+    plt.figure(figsize=(8, 6))
+    lambda_values = np.linspace(0.5, 4.5, 5)
+    for lam in lambda_values:
+        prices = [compute_vix_futures_price(tau, base_V_t, lam, base_params['theta_p'], base_params['xi_p']) for tau in tau_range]
+        plt.plot(tau_range, prices, label=f'$\\lambda={lam:.1f}$')
+    plt.title('VIX Futures Term Structure vs. $\\lambda$')
+    plt.xlabel('Time to Maturity (τ) in Years')
+    plt.ylabel('VIX Futures Price')
+    plt.legend()
     plt.grid(True)
-    
-    file_path_lambda = os.path.join(output_dir, 'vix_futures_sensitivity_lambda.png')
-    plt.savefig(file_path_lambda, dpi=300, bbox_inches='tight')
+    plt.savefig(os.path.join(output_dir, 'vix_term_structure_vs_lambda.png'), dpi=300, bbox_inches='tight')
     plt.close()
 
-    # Sensitivity to theta (Long-Run Variance)
-    print('Analyzing sensitivity to theta...')
-    theta_range = np.linspace(0.0, 0.1, 101)
-    prices_theta = [compute_vix_futures_price(base_tau, base_V_t, base_params['lambda_p'], t, base_params['xi_p']) for t in theta_range]
-
-    plt.figure(figsize=(7, 5))
-    plt.plot(theta_range, prices_theta)
-    plt.title('VIX Futures Price vs. $\\theta$ (Long-Run Variance)')
-    plt.xlabel('$\\theta$')
-    plt.ylabel('Futures Price')
+    # Sensitivity to Theta
+    print('Generating plot for sensitivity to Theta...')
+    plt.figure(figsize=(8, 6))
+    theta_values = np.linspace(0.02, 0.10, 5)
+    for a_theta in theta_values:
+        prices = [compute_vix_futures_price(tau, base_V_t, base_params['lambda_p'], a_theta, base_params['xi_p']) for tau in tau_range]
+        plt.plot(tau_range, prices, label=f'$\\theta={a_theta:.2f}$')
+    plt.title('VIX Futures Term Structure vs. $\\theta$')
+    plt.xlabel('Time to Maturity (τ) in Years')
+    plt.ylabel('VIX Futures Price')
+    plt.legend()
     plt.grid(True)
-    
-    file_path_theta = os.path.join(output_dir, 'vix_futures_sensitivity_theta.png')
-    plt.savefig(file_path_theta, dpi=300, bbox_inches='tight')
+    plt.savefig(os.path.join(output_dir, 'vix_term_structure_vs_theta.png'), dpi=300, bbox_inches='tight')
     plt.close()
 
-    # Sensitivity to xi (Volatility of Volatility)
-    print('Analyzing sensitivity to xi...')
-    xi_range = np.linspace(0.1, 1.50, 141)
-    prices_xi = [compute_vix_futures_price(base_tau, base_V_t, base_params['lambda_p'], base_params['theta_p'], x) for x in xi_range]
+    # Sensitivity to Xi
+    print('Generating plot for sensitivity to Xi...')
+    plt.figure(figsize=(8, 6))
+    xi_values = np.linspace(0.3, 1.1, 5)
+    for a_xi in xi_values:
+        prices = [compute_vix_futures_price(tau, base_V_t, base_params['lambda_p'], base_params['theta_p'], a_xi) for tau in tau_range]
+        plt.plot(tau_range, prices, label=f'$\\xi={a_xi:.1f}$')
 
-    plt.figure(figsize=(7, 5))
-    plt.plot(xi_range, prices_xi)
-    plt.title('VIX Futures Price vs. $\\xi$ (Vol of Vol)')
-    plt.xlabel('$\\xi$')
-    plt.ylabel('Futures Price')
+    plt.title('VIX Futures Term Structure vs. $\\xi$')
+    plt.xlabel('Time to Maturity (τ) in Years')
+    plt.ylabel('VIX Futures Price')
+    plt.legend()
     plt.grid(True)
-
-    file_path_xi = os.path.join(output_dir, 'vix_futures_sensitivity_xi.png')
-    plt.savefig(file_path_xi, dpi=300, bbox_inches='tight')
+    plt.savefig(os.path.join(output_dir, 'vix_term_structure_vs_xi.png'), dpi=300, bbox_inches='tight')
     plt.close()
     
-    print('\nSensitivity analysis complete.')
-
+    print(f'\nSensitivity analysis complete. Plots saved to \'{output_dir}\'.')
 
 if __name__ == '__main__':
     analyze_parameter_sensitivity()

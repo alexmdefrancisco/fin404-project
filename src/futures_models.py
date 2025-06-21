@@ -46,71 +46,72 @@ def analyze_variance_futures_sensitivity():
     """
     Analyzes how the Variance futures price depends on the model parameters
     """
-    print("--- Running Variance Futures Parameter Sensitivity Analysis ---")
+    print("--- Running Variance Futures Term Structure Sensitivity Analysis ---")
 
     output_dir = 'results/figures'
     os.makedirs(output_dir, exist_ok=True)
 
-    # Case parameters for the analysis
+    # Base Case Parameters for Analysis
     base_V_t = 0.04  # VIX = 20
-    base_tau = 0.25  # 3 months remaining
     base_tau_elapsed = 0.25 # 3 months elapsed
+    # For this analysis, we assume the accrued part and time elapsed are fixed.
     base_accrued_var = 10000 * base_V_t * base_tau_elapsed # Simplified assumption
     base_params = {'lambda_p': 2.5, 'theta_p': 0.06, 'xi_p': 0.7}
+    tau_range = np.linspace(0.01, 1.0, 100) # Time to maturity from ~4 days to 1 year
 
-    # Sensitivity to lambda (Mean-Reversion Speed)
-    print('Analyzing sensitivity to lambda...')
-    lambda_range = np.linspace(0.3, 5.0, 95)
-    prices_lambda = [compute_variance_futures_price(base_tau, base_V_t, base_accrued_var, base_tau_elapsed, l, base_params['theta_p'], base_params['xi_p']) for l in lambda_range]
-    
-    plt.figure(figsize=(7, 5))
-    plt.plot(lambda_range, prices_lambda)
-    plt.title('Variance Futures Price vs. $\\lambda$ (Mean-Reversion Speed)')
-    plt.xlabel('$\\lambda$')
-    plt.ylabel('Futures Price')
+    # Sensitivity to Lambda (Mean-Reversion Speed)
+    print('Generating plot for sensitivity to Lambda...')
+    plt.figure(figsize=(8, 6))
+    lambda_values = np.linspace(1.5, 5.5, 5)
+
+    for lam in lambda_values:
+        prices = [compute_variance_futures_price(tau, base_V_t, base_accrued_var, base_tau_elapsed, lam, base_params['theta_p'], base_params['xi_p']) for tau in tau_range]
+        plt.plot(tau_range, prices, label=f'$\\lambda={lam:.1f}$')
+
+    plt.title('Variance Futures Term Structure vs. $\\lambda$')
+    plt.xlabel('Time to Maturity (τ) in Years')
+    plt.ylabel('Variance Futures Price')
+    plt.legend()
     plt.grid(True)
-    
-    file_path_lambda = os.path.join(output_dir, 'variance_futures_sensitivity_lambda.png')
-    plt.savefig(file_path_lambda, bbox_inches='tight')
+    plt.savefig(os.path.join(output_dir, 'variance_term_structure_vs_lambda.png'), dpi=300, bbox_inches='tight')
     plt.close()
 
-    # Sensitivity to theta (Long-Run Variance)
-    print('Analyzing sensitivity to theta...')
-    theta_range = np.linspace(0.0, 0.1, 101)
-    prices_theta = [compute_variance_futures_price(base_tau, base_V_t, base_accrued_var, base_tau_elapsed, base_params['lambda_p'], t, base_params['xi_p']) for t in theta_range]
+    # Sensitivity to Theta (Long-Run Variance)
+    print('Generating plot for sensitivity to Theta...')
+    plt.figure(figsize=(8, 6))
+    theta_values = np.linspace(0.02, 0.10, 5)
 
-    plt.figure(figsize=(7, 5))
-    plt.plot(theta_range, prices_theta)
-    plt.title('Variance Futures Price vs. $\\theta$ (Long-Run Variance)')
-    plt.xlabel('$\\theta$')
-    plt.ylabel('Futures Price')
+    for a_theta in theta_values:
+        prices = [compute_variance_futures_price(tau, base_V_t, base_accrued_var, base_tau_elapsed, base_params['lambda_p'], a_theta, base_params['xi_p']) for tau in tau_range]
+        plt.plot(tau_range, prices, label=f'$\\theta={a_theta:.2f}$')
+
+    plt.title('Variance Futures Term Structure vs. $\\theta$')
+    plt.xlabel('Time to Maturity (τ) in Years')
+    plt.ylabel('Variance Futures Price')
+    plt.legend()
     plt.grid(True)
-    
-    file_path_theta = os.path.join(output_dir, 'variance_futures_sensitivity_theta.png')
-    plt.savefig(file_path_theta, bbox_inches='tight')
+    plt.savefig(os.path.join(output_dir, 'variance_term_structure_vs_theta.png'), dpi=300, bbox_inches='tight')
     plt.close()
 
-    # Sensitivity to xi (Volatility of Volatility)
-    print('Analyzing sensitivity to xi...')
-    xi_range = np.linspace(0.1, 1.50, 141)
-    prices_xi = [compute_variance_futures_price(base_tau, base_V_t, base_accrued_var, base_tau_elapsed, base_params['lambda_p'], base_params['theta_p'], x) for x in xi_range]
+    # Sensitivity to Xi (Volatility of Volatility)
+    print('Generating plot for sensitivity to Xi...')
+    plt.figure(figsize=(8, 6))
+    xi_values = np.linspace(0.3, 1.1, 5)
 
-    plt.figure(figsize=(7, 5))
-    plt.plot(xi_range, prices_xi)
-    plt.title('Variance Futures Price vs. $\\xi$ (Vol of Vol)')
-    plt.xlabel('$\\xi$')
-    plt.ylabel('Futures Price')
-    # Set y-axis limits to make the flat line clear, otherwise it might look jittery
-    if len(prices_xi) > 0:
-        plt.ylim(prices_xi[0] * 0.99, prices_xi[0] * 1.01)
+    for a_xi in xi_values:
+        prices = [compute_variance_futures_price(tau, base_V_t, base_accrued_var, base_tau_elapsed, base_params['lambda_p'], base_params['theta_p'], a_xi) for tau in tau_range]
+        plt.plot(tau_range, prices, label=f'$\\xi={a_xi:.1f}$')
+
+    plt.title('Variance Futures Term Structure vs. $\\xi$ (Price is Independent of $\\xi$)')
+    plt.xlabel('Time to Maturity (τ) in Years')
+    plt.ylabel('Variance Futures Price')
+    plt.legend()
     plt.grid(True)
-
-    file_path_xi = os.path.join(output_dir, 'variance_futures_sensitivity_xi.png')
-    plt.savefig(file_path_xi, bbox_inches='tight')
+    plt.savefig(os.path.join(output_dir, 'variance_term_structure_vs_xi.png'), dpi=300, bbox_inches='tight')
     plt.close()
     
-    print('\nSensitivity analysis complete.')
+    print(f'\nSensitivity analysis complete. Plots saved to \'{output_dir}\'.')
 
 
-if __name__ == '__main__':
-    analyze_variance_futures_sensitivity()
+if __name__ == '__main__': 
+    analyze_variance_futures_sensitivity() 
