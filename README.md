@@ -62,7 +62,7 @@ python main.py --task part3_q7
 python main.py --task part3_q8
 
 # Example: Generate all results for Part 3
-python main.py --all_questions
+python main.py --all-questions
 ```
 
 ### 4. Launch an individual file

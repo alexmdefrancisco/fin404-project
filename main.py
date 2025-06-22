@@ -69,10 +69,9 @@ def main():
     
     # Argument to run all questions for a specific part
     parser.add_argument(
-        '--part', 
-        type=int,
-        choices=[3],
-        help="Specify the project part to run all questions for (e.g., 3 for Part 3)"
+        '--all-questions',
+        action='store_true',
+        help="Run all questions for Part 3."
     )
 
     args = parser.parse_args()
@@ -84,7 +83,7 @@ def main():
             run_part3_q7()
         elif args.task == 'part3_q8':
             run_part3_q8()
-    elif args.part == 3:
+    elif args.all_questions:
         print("--- Running all questions for Part 3 ---")
         run_part3_q6()
         print("-" * 50)
