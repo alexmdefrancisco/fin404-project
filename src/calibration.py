@@ -7,8 +7,12 @@ from scipy.optimize import minimize
 import warnings
 from tqdm import tqdm
 
-from vix_calculations import compute_vix_futures_price
-from futures_models import compute_variance_futures_price
+try:
+    from src.vix_calculations import compute_vix_futures_price
+    from src.futures_models import compute_variance_futures_price
+except ImportError:
+    from vix_calculations import compute_vix_futures_price
+    from futures_models import compute_variance_futures_price
 
 # Suppress potential integration warnings for cleaner output.
 warnings.filterwarnings('ignore', category=UserWarning)
