@@ -19,6 +19,7 @@ warnings.filterwarnings('ignore', category=UserWarning)
 
 # Market Data -- Synthetic
 vix_futures_data = [
+    {'symbol': 'VIX', 'expiry': '5/9/25', 'price': 22.6694, 'days': 0},
     {'symbol': 'VX/K5', 'expiry': '5/21/25', 'price': 22.3484, 'days': 12},
     {'symbol': 'VX/M5', 'expiry': '6/18/25', 'price': 21.8897, 'days': 40},
     {'symbol': 'VX/N5', 'expiry': '7/16/25', 'price': 21.7491, 'days': 68},
@@ -98,6 +99,8 @@ def run_calibration_pipeline(vix_data, variance_data, initial_guess, bounds):
         for contract in vix_data:
             tau = contract['days'] / 252.0
             # Skip the spot VIX for calibration if its tau is 0
+            if tau == 0:
+                continue
             model_price = compute_vix_futures_price(tau, V_t, lambda_p, theta_p, xi_p)
             total_error += (model_price - contract['price'])**2
 
