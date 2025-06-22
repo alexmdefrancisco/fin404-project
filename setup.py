@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='fin404-project',
-    version='0.1.0',
+    version='1.0.0',
     description='EPFL Fin404 Derivatives Project: The VIX and related derivatives',
     author='Gabriele Calandrino, Alex Martinez de Francisco, Federico Sabbatani Schiuma, Letizia Seveso',
     packages=find_packages(where='src'),

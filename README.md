@@ -12,12 +12,9 @@ fin404-project/             # root directory
 │   ├── vix_calculations.py # Functions for VIX index related calculations and analysis
 │   ├── futures_models.py   # Implementation of VIX and Variance futures pricing models
 │   ├── calibration.py      # Code for model calibration (Part 3, Q8)
-│   └── utils.py            # Utility functions (e.g., plotting, data loading)
-├── tests/                  # Unit tests for source code modules (optional, but good practice)
 ├── results/                # Generated figures, tables, and potentially intermediate results
 │   ├── figures/            # Plots and graphs
 │   └── tables/             # Numerical results
-├── report/                 # Source files for the final report (e.g., LaTeX or Word)
 ├── main.py                 # Main script to run different parts of the project analysis
 ├── environment.yml         # Conda environment specification
 ├── requirements.txt        # pip-installable dependencies
@@ -50,11 +47,7 @@ pip install -e .
 pip install -r requirements.txt  # notebook & test dependencies
 ```
 
-### 3. Prepare the data
-
-Place the `Fin404-2025-VIXnCo-Data.xlsx` file  into the `data/` directory.
-
-### 4. Run Analyses and Generate Results
+### 3. Run Analyses and Generate Results
 
 Use `main.py` with appropriate arguments to run specific analyses. The exact arguments will depend on your `main.py` implementation. For example:
 
@@ -66,31 +59,25 @@ python main.py --task part3_q6
 python main.py --task part3_q7
 
 # Example: Run model calibration (Part 3, Q8)
-python main.py --task part3_q8 --data_file data/Fin404-2025-VIXnCo-Data.xlsx
+python main.py --task part3_q8
 
 # Example: Generate all results for Part 3
-python main.py --part 3 --all_questions
+python main.py --all_questions
 ```
 
-### 5. Launch an individual notebook
+### 4. Launch an individual notebook
 
 ```bash
 jupyter notebook notebooks/part3_futures_analysis_calibration.ipynb
 ```
 
-### 6. Execute tests
+### 5. Execute tests
 
 If you have written tests in the tests/ directory:
 
 ```bash
 pytest
 ```
-
-## Contributing
-
-* Work on feature branches: `feature/part3-vix-features`, etc.
-* Open PRs against `main` branch.
-* CI runs `python main.py` and tests on each push.
 
 ## License
 
