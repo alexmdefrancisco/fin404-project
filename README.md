@@ -65,18 +65,10 @@ python main.py --task part3_q8
 python main.py --all_questions
 ```
 
-### 4. Launch an individual notebook
+### 4. Launch an individual file
 
 ```bash
-jupyter notebook notebooks/part3_futures_analysis_calibration.ipynb
-```
-
-### 5. Execute tests
-
-If you have written tests in the tests/ directory:
-
-```bash
-pytest
+python src/vix_calculations.py
 ```
 
 ## License
