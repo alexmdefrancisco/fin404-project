@@ -12,7 +12,7 @@ from futures_models import compute_variance_futures_price
 # Suppress potential integration warnings for cleaner output.
 warnings.filterwarnings('ignore', category=UserWarning)
 
-# --- Market Data ---
+# Market Data -- Synthetic
 vix_futures_data = [
     {'symbol': 'VX/K5', 'expiry': '5/21/25', 'price': 22.3484, 'days': 12},
     {'symbol': 'VX/M5', 'expiry': '6/18/25', 'price': 21.8897, 'days': 40},
@@ -103,8 +103,8 @@ def run_calibration_pipeline(vix_data, variance_data, initial_guess, bounds):
             accrued_variance_input = contract['accrued'] * tau_elapsed
             
             model_price = compute_variance_futures_price(tau, V_t, accrued_variance_input, tau_elapsed, lambda_p, theta_p, xi_p)
-            # Variance prices are large, so we scale the error to be comparable to VIX error
-            total_error += ((model_price - contract['price']) / 10)**2 
+            # Variance prices are large, so we scale the error to be comparable to VIX error (100)
+            total_error += ((model_price - contract['price']) / 10)**2
 
         return total_error
 
@@ -134,7 +134,7 @@ def run_calibration_pipeline(vix_data, variance_data, initial_guess, bounds):
     print(f"  Long-Run Mean Variance (θ):       {theta_cal:.4f}  (Implies long-run VIX of {100*np.sqrt(theta_cal):.2f})")
     print(f"  Volatility of Volatility (ξ):     {xi_cal:.4f}")
 
-    # --- Print detailed results table ---
+    # Print detailed results table
     print("\n--- Model Fit Analysis ---")
     print("\nVIX Futures:")
     print(f"{'Symbol':<8} {'Market':>10} {'Model':>10} {'Difference':>12}")
@@ -156,7 +156,7 @@ def run_calibration_pipeline(vix_data, variance_data, initial_guess, bounds):
         diff = model_price - contract['price']
         print(f"{contract['symbol']:<8} {contract['price']:>10.2f} {model_price:>10.2f} {diff:>12.2f}")
     
-    # --- Generate and save plots ---
+    # Generate and save plots
     output_dir = 'results/figures'
     os.makedirs(output_dir, exist_ok=True)
     plot_calibration_results(calibrated_params, output_dir)
